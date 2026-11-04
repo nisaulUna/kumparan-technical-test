@@ -8,7 +8,7 @@ import (
 	"backend-article-service/internal/model"
 )
 
-// Test invalid PATCH requests
+// TestUpdateArticleValidation verifies that missing or blank update fields are rejected.
 func TestUpdateArticleValidation(t *testing.T) {
 	tests := []struct {
 		name string
@@ -56,7 +56,7 @@ func TestUpdateArticleValidation(t *testing.T) {
 	}
 }
 
-// Test invalid pagination cursor
+// TestInvalidPaginationCursor verifies that a malformed pagination cursor is rejected.
 func TestInvalidPaginationCursor(t *testing.T) {
 	s := &ArticleService{}
 
@@ -75,6 +75,7 @@ func TestInvalidPaginationCursor(t *testing.T) {
 	}
 }
 
+// strPtr returns a pointer to the provided string for test requests.
 func strPtr(value string) *string {
 	return &value
 }

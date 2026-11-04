@@ -21,6 +21,7 @@ import (
 	"github.com/jackc/pgx/v5/pgxpool"
 )
 
+// TestArticleIntegration verifies author and article endpoints against PostgreSQL.
 func TestArticleIntegration(t *testing.T) {
 	// 1. Load the explicitly configured database
 	dsn := os.Getenv("TEST_DATABASE_URL")

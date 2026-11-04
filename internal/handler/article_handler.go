@@ -27,7 +27,7 @@ func NewArticleHandler(
 	return &ArticleHandler{Service: s}
 }
 
-// POST /articles
+// Create handles POST /articles and returns the created article.
 func (h *ArticleHandler) Create(c *gin.Context) {
 	var req model.CreateArticleRequest
 
@@ -67,11 +67,10 @@ func (h *ArticleHandler) Create(c *gin.Context) {
 		return
 	}
 
-	// Return created article
 	c.JSON(http.StatusCreated, article)
 }
 
-// GET /articles
+// GetAll handles GET /articles and returns filtered articles with cursor pagination.
 func (h *ArticleHandler) GetAll(c *gin.Context) {
 	// Default pagination limit
 	limit := 20
@@ -136,7 +135,7 @@ func (h *ArticleHandler) GetAll(c *gin.Context) {
 	c.JSON(http.StatusOK, result)
 }
 
-// UPDATE
+// Update handles PATCH /articles/:id and returns the updated article.
 func (h *ArticleHandler) Update(c *gin.Context) {
 	id := c.Param("id")
 

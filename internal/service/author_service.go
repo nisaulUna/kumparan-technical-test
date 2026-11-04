@@ -21,6 +21,7 @@ func NewAuthorService(repo *repository.AuthorRepository) *AuthorService {
 	return &AuthorService{Repo: repo}
 }
 
+// Create validates and trims the author name before saving a new author.
 func (s *AuthorService) Create(
 	ctx context.Context,
 	req model.CreateAuthorRequest,
@@ -43,6 +44,7 @@ func (s *AuthorService) Create(
 	return author, nil
 }
 
+// GetAll retrieves authors with limit-offset pagination.
 func (s *AuthorService) GetAll(
 	ctx context.Context,
 	limit int,

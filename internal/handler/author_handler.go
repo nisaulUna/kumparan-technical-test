@@ -19,7 +19,7 @@ func NewAuthorHandler(s *service.AuthorService) *AuthorHandler {
 	return &AuthorHandler{Service: s}
 }
 
-// POST /authors
+// Create handles POST /authors and returns the created author.
 func (h *AuthorHandler) Create(c *gin.Context) {
 	var req model.CreateAuthorRequest
 
@@ -48,7 +48,7 @@ func (h *AuthorHandler) Create(c *gin.Context) {
 	c.JSON(http.StatusCreated, author)
 }
 
-// GET /authors
+// GetAll handles GET /authors and returns authors with limit-offset pagination.
 func (h *AuthorHandler) GetAll(c *gin.Context) {
 	limit := 20
 	offset := 0

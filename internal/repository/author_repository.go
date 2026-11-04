@@ -16,7 +16,7 @@ func NewAuthorRepository(db *pgxpool.Pool) *AuthorRepository {
 	return &AuthorRepository{DB: db}
 }
 
-// Insert new author
+// Create inserts a new author into PostgreSQL.
 func (r *AuthorRepository) Create(
 	ctx context.Context,
 	author model.Author,
@@ -30,7 +30,7 @@ func (r *AuthorRepository) Create(
 	return err
 }
 
-// Retrieve authors with pagination
+// GetAll retrieves authors ordered by ID with limit-offset pagination.
 func (r *AuthorRepository) GetAll(
 	ctx context.Context,
 	limit int,

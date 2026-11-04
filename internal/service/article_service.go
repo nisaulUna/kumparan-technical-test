@@ -26,13 +26,14 @@ type ArticleService struct {
 	Repo *repository.ArticleRepository
 }
 
+// NewArticleService creates an article service with the provided repository.
 func NewArticleService(
 	repo *repository.ArticleRepository,
 ) *ArticleService {
 	return &ArticleService{Repo: repo}
 }
 
-// Create new article
+// Create validates and trims article fields before saving a new article.
 func (s *ArticleService) Create(
 	ctx context.Context,
 	req model.CreateArticleRequest,
@@ -80,6 +81,7 @@ type articleCursor struct {
 	Author    string    `json:"author"`
 }
 
+// GetAll validates the cursor and retrieves filtered articles with pagination metadata.
 func (s *ArticleService) GetAll(
 	ctx context.Context,
 	params model.ArticleListParams,
@@ -173,7 +175,7 @@ var (
 	ErrArticleNotFound      = errors.New("article not found")
 )
 
-// Update an existing article
+// Update validates and trims the supplied fields before updating an existing article.
 func (s *ArticleService) Update(
 	ctx context.Context,
 	id string,

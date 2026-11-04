@@ -17,12 +17,11 @@ type ArticleRepository struct {
 	DB *pgxpool.Pool
 }
 
-// Initialize article repository
 func NewArticleRepository(db *pgxpool.Pool) *ArticleRepository {
 	return &ArticleRepository{DB: db}
 }
 
-// Create new article
+// Create inserts a new article and reads its database-generated timestamps.
 func (r *ArticleRepository) Create(
 	ctx context.Context,
 	article *model.Article,
@@ -46,7 +45,7 @@ func (r *ArticleRepository) Create(
 	)
 }
 
-// Retrieve articles with search, author filter, and pagination
+// GetAll retrieves filtered articles in newest-first order with one extra row for pagination.
 func (r *ArticleRepository) GetAll(
 	ctx context.Context,
 	query string,
@@ -157,6 +156,7 @@ func (r *ArticleRepository) GetAll(
 	return articles, nil
 }
 
+// Update saves the supplied article fields and refreshes the update timestamp.
 func (r *ArticleRepository) Update(
 	ctx context.Context,
 	id string,
