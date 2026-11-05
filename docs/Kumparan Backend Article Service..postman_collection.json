@@ -1,0 +1,416 @@
+{
+  "info": {
+    "_postman_id": "b4547d61-eea6-4878-92bd-f0ef3d850d5f",
+    "name": "Kumparan Backend Article Service.",
+    "description": "StartFragment\n\n# Kumparan Backend Article Service\n\nThis collection provides executable examples for author creation, article management, full-text keyword search, author-name filtering, combined filtering, cursor-based pagination, and article updates.\n\n**Base URL:** `http://localhost:8080`\n\n**How to use:**\n\n1. Configure PostgreSQL and the `DATABASE_URL` environment variable.\n    \n2. Start the backend using `go run ./cmd/api`.\n    \n3. Execute the collection requests sequentially.\n    \n4. Author IDs, article IDs, and pagination cursors are stored automatically through Postman scripts.\n    \n\nThe API examples use illustrative political news content for testing purposes.\n\nEndFragment",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "36911242"
+  },
+  "item": [
+    {
+      "name": "API 01 — Health Check",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              ""
+            ],
+            "type": "text/javascript",
+            "packages": {}
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/health",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "health"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "API 02 — Create Author",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "\r\npm.test(\"Author created successfully\", function () {\r\n    pm.response.to.have.status(201);\r\n});\r\n\r\nif (pm.response.code === 201) {\r\n    const data = pm.response.json();\r\n\r\n    pm.collectionVariables.set(\"authorId\", data.id);\r\n\r\n    pm.test(\"Author ID saved correctly\", function () {\r\n        pm.expect(\r\n            pm.collectionVariables.get(\"authorId\")\r\n        ).to.eql(data.id);\r\n    });\r\n\r\n    console.log(\"Saved authorId:\", data.id);\r\n}\r\n"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n  \"name\": \"{{authorName}}\"\r\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "{{baseUrl}}/authors",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "authors"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "API 03 — List Authors",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/authors?limit=20&offset=0",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "authors"
+          ],
+          "query": [
+            {
+              "key": "limit",
+              "value": "20"
+            },
+            {
+              "key": "offset",
+              "value": "0"
+            }
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "API 04 — Create Article",
+      "event": [
+        {
+          "listen": "prerequest",
+          "script": {
+            "exec": [
+              "\r",
+              "const authorId = pm.variables.get(\"authorId\");\r",
+              "\r",
+              "console.log(\"Author ID used by API 04:\", authorId);\r",
+              "\r",
+              "pm.test(\"Author ID variable is available\", function () {\r",
+              "    pm.expect(authorId).to.be.a(\"string\").and.not.empty;\r",
+              "    pm.expect(authorId).to.match(\r",
+              "        /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i\r",
+              "    );\r",
+              "});\r",
+              ""
+            ],
+            "type": "text/javascript",
+            "packages": {}
+          }
+        },
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "\r",
+              "if (pm.response.code === 201) {\r",
+              "    const response = pm.response.json();\r",
+              "\r",
+              "    pm.collectionVariables.set(\"articleId\", response.id);\r",
+              "\r",
+              "    console.log(\"Saved articleId:\", response.id);\r",
+              "}\r",
+              ""
+            ],
+            "type": "text/javascript",
+            "packages": {}
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "\r\n{\r\n  \"author_id\": \"{{authorId}}\",\r\n  \"title\": \"Dinamika Politik Indonesia dan Kebijakan Publik\",\r\n  \"body\": \"Artikel membahas perkembangan politik Indonesia, kebijakan pemerintah, transparansi anggaran, dan peran DPR dalam proses demokrasi.\"\r\n}\r\n",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "{{baseUrl}}/articles",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "articles"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "API 05 — Create Second Article",
+      "request": {
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "\r\n{\r\n  \"author_id\": \"{{authorId}}\",\r\n  \"title\": \"Partisipasi Masyarakat dalam Demokrasi\",\r\n  \"body\": \"Partisipasi masyarakat memiliki peran penting dalam pengawasan kebijakan pemerintah dan perkembangan demokrasi Indonesia.\"\r\n}\r\n",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "{{baseUrl}}/articles",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "articles"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "API 06 — List Articles",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/articles",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "articles"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "API 07 — Search Articles",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/articles?query=politik",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "articles"
+          ],
+          "query": [
+            {
+              "key": "query",
+              "value": "politik"
+            }
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "API 08 — Filter Articles by Author",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/articles?author={{authorName}}",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "articles"
+          ],
+          "query": [
+            {
+              "key": "author",
+              "value": "{{authorName}}"
+            }
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "API 09 — Combined Search and Author Filter",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/articles?query=politik&author={{authorName}}",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "articles"
+          ],
+          "query": [
+            {
+              "key": "query",
+              "value": "politik"
+            },
+            {
+              "key": "author",
+              "value": "{{authorName}}"
+            }
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "API 10 — Pagination First Page",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "\r",
+              "if (pm.response.code === 200) {\r",
+              "    const response = pm.response.json();\r",
+              "\r",
+              "    if (response.next_cursor) {\r",
+              "        pm.collectionVariables.set(\r",
+              "            \"nextCursor\",\r",
+              "            response.next_cursor\r",
+              "        );\r",
+              "\r",
+              "        console.log(\"Next cursor saved\");\r",
+              "    } else {\r",
+              "        pm.collectionVariables.unset(\"nextCursor\");\r",
+              "        console.log(\"No next page available\");\r",
+              "    }\r",
+              "}\r",
+              ""
+            ],
+            "type": "text/javascript",
+            "packages": {}
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/articles?limit=1",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "articles"
+          ],
+          "query": [
+            {
+              "key": "limit",
+              "value": "1"
+            }
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "API 11 — Pagination Next Page",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/articles?limit=1&cursor={{nextCursor}}",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "articles"
+          ],
+          "query": [
+            {
+              "key": "limit",
+              "value": "1",
+              "id": 0
+            },
+            {
+              "key": "cursor",
+              "value": "{{nextCursor}}",
+              "id": 1
+            }
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "API 12 — Update Article",
+      "request": {
+        "method": "PATCH",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "\r\n{\r\n  \"title\": \"Perkembangan Kebijakan Publik Indonesia\",\r\n  \"body\": \"Artikel ini telah diperbarui untuk membahas kebijakan publik, tata kelola pemerintahan, dan transparansi anggaran.\"\r\n}\r\n",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "{{baseUrl}}/articles/{{articleId}}",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "articles",
+            "{{articleId}}"
+          ]
+        }
+      },
+      "response": []
+    }
+  ],
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:8080"
+    },
+    {
+      "key": "authorName",
+      "value": "Nisa"
+    },
+    {
+      "key": "articleId",
+      "value": ""
+    },
+    {
+      "key": "authorId",
+      "value": ""
+    },
+    {
+      "key": "nextCursor",
+      "value": ""
+    }
+  ]
+}

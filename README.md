@@ -176,7 +176,7 @@ Request:
 }
 ```
 
-### GET /articles
+### GETarticles
 
 Retrieve articles ordered by `created_at DESC, id DESC`.
 
@@ -232,6 +232,25 @@ Request:
 ```
 
 The `created_at` field remains unchanged. The `updated_at` field is refreshed.
+
+
+## Postman API Collection
+
+A Postman Collection is provided to simplify API testing and demonstrate the available endpoints.
+
+### Collection File
+
+[Download Postman Collection](docs/kumparan-article-service.postman_collection.json)
+
+### How to Use
+
+1. Configure PostgreSQL using `schema.sql`.
+2. Set up the `.env` file using `.env.example`.
+3. Run the backend:
+   `go run ./cmd/api`
+4. Open Postman and import the collection JSON file.
+5. Set the `baseUrl` variable to `http://localhost:8080`.
+6. Execute the requests in sequence.
 
 ## 7. Search Implementation
 

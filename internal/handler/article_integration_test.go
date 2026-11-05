@@ -43,9 +43,14 @@ func TestArticleIntegration(t *testing.T) {
 		"SELECT current_database()",
 	).Scan(&dbName)
 
-	if err != nil || dbName != "article_service" {
+	if err != nil {
 		db.Close()
-		t.Fatal("Test must connect to article_service")
+		t.Fatalf("Failed to query test database identity: %v", err)
+	}
+
+	if dbName != "article_service" {
+		db.Close()
+		t.Fatalf("Test must connect to article_service; connected to %q", dbName)
 	}
 
 	// 3. Track only records created by this test
